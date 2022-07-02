@@ -46,7 +46,9 @@ export async function login(username, password) {
 
     localStorage.setItem('userToken', result['user-token']);
     localStorage.setItem('username', result.username);
-    localStorage.setItem('userId', result.userId);
+    localStorage.setItem('userId', result.objectId);
+    
+    console.log(result);
 
     endRequest();
     return result;
@@ -148,8 +150,9 @@ export async function buyTicket(movie) {
     return updateMovie(movieId, { tickets: newTickets});
 }
 
-export async function getMoviesByOwner(ownerId) {
+export async function getMoviesByOwner() {
     const token = localStorage.getItem('userToken');
+    const ownerId = localStorage.getItem('userId');
     
     beginRequest();
     const result = (await fetch(host(endpoints.MOVIES + `?where=ownerId%3D%27${ownerId}%27`), {
