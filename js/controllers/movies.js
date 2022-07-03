@@ -1,5 +1,5 @@
 import { showInfo, showError } from "../notification.js";
-import { createMovie, getMovies, buyTicket as apiBuyTicket, getMoviesByOwner, getMovieById, updateMovie } from "../data.js";
+import { createMovie, getMovies, buyTicket as apiBuyTicket, getMoviesByOwner, getMovieById, updateMovie, deleteMovie as apiDelete } from "../data.js";
 
 export default async function catalog() {
     this.partials = {
@@ -8,9 +8,11 @@ export default async function catalog() {
         movie: await this.load('./templates/movie/movie.hbs')
     }
 
-    const movies = await getMovies();
+    const search = this.params.search || '';
+
+    const movies = await getMovies(search);
     this.app.userData.movies = movies; 
-    const context = Object.assign({origin: encodeURIComponent('#/catalog')}, this.app.userData)
+    const context = Object.assign({origin: encodeURIComponent('#/catalog'), search}, this.app.userData)
 
     this.partial('./templates/movie/catalog.hbs', context);
 }
@@ -124,10 +126,9 @@ export async function editPost() {
             throw error;
         }
 
-        for(let i = 0; i < this.app.userData.movies; i++) {
-            if(this.app.userData.movies[i].objectId.length === movie) {
-
-                this.app.userData.movies.splice(i, 1, result);
+        for(let i = 0; i < this.app.userData.movies.length; i++) {
+            if(this.app.userData.movies[i].objectId === movieId) {
+                this.app.userData.movies.splice(i, 1);
             }
         }
 
@@ -157,6 +158,29 @@ export async function buyTicket() {
         }
         showInfo(`Bought ticket for ${movie.title}`);
         this.redirect(this.params.origin);
+    } catch(err) {
+        console.error(err);
+        showError(err.message);
+    }
+}
+
+export async function deleteMovie() {
+    if(confirm('Are you sure you want to delete this movie') === false) {
+       return this.redirect('#/my_movies');
+       
+    }
+    const movieId = this.params.id;
+    
+    try {
+        const result = await apiDelete(movieId);
+
+        if(result.hasOwnProperty('errorData')) {
+            const error = new Error();
+            Object.assign(error, result);
+            throw error;
+        }
+        showInfo('Movie deleted');
+        this.redirect('#/my_movies');
     } catch(err) {
         console.error(err);
         showError(err.message);
