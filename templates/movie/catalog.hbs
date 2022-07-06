@@ -11,21 +11,9 @@
     </form>
     {{/if}}
     <div class="movies">
-        {{#if myMovies}}
-
-        {{#each movies}}
-        {{>ownMovie}}
-        {{/each}}
-
-        {{else}}
-
         {{#each movies}}
         {{>movie}}
         {{/each}}
-        
-        {{/if}}
-        
-
     </div
 </div>
 {{>footer}}

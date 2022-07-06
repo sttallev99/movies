@@ -5,7 +5,8 @@ export default async function catalog() {
     this.partials = {
         header: await this.load('./templates/common/header.hbs'),
         footer: await this.load('./templates/common/footer.hbs'),
-        movie: await this.load('./templates/movie/movie.hbs')
+        movie: await this.load('./templates/movie/movie.hbs'),
+        controls: await this.load('./templates/movie/movieControls.hbs')
     }
 
     const search = this.params.search || '';
@@ -21,8 +22,9 @@ export async function myMovies() {
     this.partials = {
         header: await this.load('./templates/common/header.hbs'),
         footer: await this.load('./templates/common/footer.hbs'),
-        ownMovie: await this.load('./templates/movie/ownMovie.hbs'),
-        movie: await this.load('./templates/movie/movie.hbs')
+        movie: await  this.load('./templates/movie/movie.hbs'),
+        controls: await this.load('./templates/movie/ownMovieControls.hbs'),
+        movieControls: await this.load('./templates/movie/movieControls.hbs')
     }
 
     const movies = await getMoviesByOwner();
